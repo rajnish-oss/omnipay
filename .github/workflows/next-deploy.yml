@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]  
 
 env:
-  AZURE_WEBAPP_NAME: omnipay        
+  AZURE_WEBAPP_NAME: omnipay        # 👈 your app service name
   AZURE_WEBAPP_PACKAGE_PATH: '.'     
   NODE_VERSION: '20.x'
 
@@ -31,7 +31,7 @@ jobs:
           STRIPE_SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: npm run build
 
-      # ✅ Upload only what Azure needs
+      # ✅ Upload full app including node_modules so Azure only runs npm start
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -39,6 +39,7 @@ jobs:
           path: |
             .next
             public
+            node_modules
             package.json
             package-lock.json
 
@@ -52,9 +53,7 @@ jobs:
           name: app
           path: .
 
-      - name: Install production dependencies
-        run: npm install --only=production
-
+      # 👇 No need to npm install again, everything is prebuilt
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v3
         with:
