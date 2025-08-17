@@ -26,16 +26,21 @@ jobs:
         run: npm ci
 
       - name: Build Next.js app
-        env:                               # 👇 inject Stripe keys at build time
+        env:                             
           STRIPE_PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
           STRIPE_SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: npm run build
 
+      # ✅ Upload only what Azure needs
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app
-          path: .
+          path: |
+            .next
+            public
+            package.json
+            package-lock.json
 
   deploy:
     runs-on: ubuntu-latest
@@ -45,6 +50,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app
+          path: .
+
+      - name: Install production dependencies
+        run: npm install --only=production
 
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v3
