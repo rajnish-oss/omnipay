@@ -1,7 +1,8 @@
 export const dynamic = "force-dynamic";
 
-import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+
 
 const stripe = new Stripe(process.env.SECRET_KEY as string);
 

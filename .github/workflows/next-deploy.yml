@@ -26,6 +26,9 @@ jobs:
         run: npm ci
 
       - name: Build Next.js app
+        env:                               # 👇 inject Stripe keys at build time
+          STRIPE_PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: npm run build
 
       - name: Upload build artifacts
